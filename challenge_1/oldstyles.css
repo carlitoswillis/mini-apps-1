@@ -1,0 +1,43 @@
+.board {
+  width: 50%;
+  height: 100%;
+  float: left;
+  background-color: lightgrey;
+  /* width: 300px; */
+  /* border: 2px solid black; */
+  padding: 5%;
+  /* margin: 20px; */
+}
+
+.row {
+  /* width: 70%; */
+  height: 30%;
+  border: 1px solid black;
+  padding: 5%;
+  /* margin: 20px; */
+}
+
+.uno {
+  width: calc(100% / 3);
+  border: 1px solid black;
+  padding: 5%;
+  /* outline: 1px solid; */
+  /* float: left; */
+}
+
+.dos {
+  width: calc(100% / 3);
+  border: 1px solid black;
+  padding: 5%;
+  /* outline: 1px solid; */
+  /* float: left; */
+}
+
+.tres {
+  width: calc(100% / 3);
+  border: 1px solid black;
+  padding: 5%;
+  /* outline: 1px solid; */
+  float: left;
+}
+
