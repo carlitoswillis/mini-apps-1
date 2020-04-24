@@ -57,10 +57,7 @@ var handleClicks = function (event) {
           alert (`${currPlayer} Won!`);
           playing = false;
         }
-        if (!playing) {
-          currPlayer = "X";
-          otherPlayer = "O"
-        } else {
+        if (playing) {
           currPlayer = otherPlayer;
           otherPlayer = board[rowLegend[event.target.id][0]][rowLegend[event.target.id][1]];
         }
