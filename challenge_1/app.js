@@ -54,6 +54,7 @@ var handleClicks = function (event) {
       board[rowLegend[event.target.id][0]][rowLegend[event.target.id][1]] = currPlayer;
       event.target.innerHTML = currPlayer;
         if (checkBoard()) {
+          document.getElementById(currPlayer).innerHTML+= currPlayer;
           alert (`${currPlayer} Won!`);
           playing = false;
         }
