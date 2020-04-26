@@ -1,12 +1,12 @@
-// function List(props) {
-//   const numbers = props.numbers;
-//   const listItems = numbers.map((number) =>
-//     <li>{number}</li>
-//   );
-//   return (
-//     <ul>{listItems}</ul>
-//   );
-// }
+function List (props) {
+  const pairs = props.pairs;
+  const listItems = pairs.map((pair) =>
+    <li>{`${pair[0]}: ${pair[1]}`}</li>
+  );
+  return (
+    <ul>{listItems}</ul>
+  );
+}
 
 
 class SignUp extends React.Component {
@@ -138,11 +138,7 @@ class Forms extends React.Component {
       return (
         <div>
         <p>Verify Your Purchase Info Below</p>
-        <ol>
-          {this.props.purchase.map((pair) => {
-            <li> {`${pair[0]}: ${pair[1]}`} </li>
-          })}
-        </ol>
+        <List pairs={this.props.purchase}/>
         <button onClick={this.props.buttonHandler}>Purchase</button>
         </div>
       );
@@ -171,7 +167,7 @@ class App extends React.Component {
         redirect: 'follow'
       };
 
-      fetch("http://localhost:3000/customer", requestOptions)
+      fetch("/customer", requestOptions)
         .then(response => response.text())
         .then(result => {
           this.setState({
@@ -183,10 +179,6 @@ class App extends React.Component {
 
     } else if (this.state.page <= 2) {
 
-      if (this.state.page === 2) {
-        event.target.innerHTML = 'Complete'
-      }
-
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
       data.id = this.state.customerId;
@@ -197,7 +189,7 @@ class App extends React.Component {
         redirect: 'follow'
       };
 
-      fetch("http://localhost:3000/customer/info", requestOptions)
+      fetch("/customer/info", requestOptions)
         .then(response => response.text())
         .then(response => {
           var result = [];
@@ -219,13 +211,17 @@ class App extends React.Component {
         currentCustomer: this.state.currentCustomer.concat(data)
       });
 
-    } else if (this.state.page === 3) {
+    } else {
+
+      this.setState({
+        page: -1,
+        currentCustomer: [],
+        customerId: undefined
+      });
 
       // show data off
 
 
-    } else {
-      // do nothing
     }
 
   }

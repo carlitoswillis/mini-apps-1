@@ -84,6 +84,14 @@ app.post('/customer/info', (req, res) => {
 
 });
 
+app.get('/customer/info2', (req, res) => {
+
+  console.log('hey');
+
+  res.redirect('back');
+
+});
+
 
 var port = 3000;
 app.listen(port, (err) => {
