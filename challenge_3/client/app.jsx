@@ -1,16 +1,40 @@
+// function List(props) {
+//   const numbers = props.numbers;
+//   const listItems = numbers.map((number) =>
+//     <li>{number}</li>
+//   );
+//   return (
+//     <ul>{listItems}</ul>
+//   );
+// }
+
 
 class SignUp extends React.Component {
   constructor (props) {
     super(props);
+    this.state = {}
+  }
+
+  onChangeHandler (event) {
+
+    this.setState({
+      [event.target.name]: event.target.value
+      });
+
   }
 
   render() {
     return (
+      <div>
       <form name='signup'>
-        <input id='username' placeholder='name' type='text' defaultValue=''/>
-        <input id='useremail' placeholder='email' type='email' defaultValue=''/>
-        <input id='userpassword' placeholder='password' type='password' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='name' placeholder='name' type='text' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='email' placeholder='email' type='email' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='password' placeholder='password' type='password' defaultValue=''/>
       </form>
+      <button onClick={(event) => {
+        this.props.buttonHandler(event, this.state);
+      }}>Next</button>
+      </div>
     );
   }
 }
@@ -18,15 +42,29 @@ class SignUp extends React.Component {
 class Shipping extends React.Component {
   constructor (props) {
     super(props);
+    this.state = {}
+  }
+
+  onChangeHandler (event) {
+
+    this.setState({
+      [event.target.name]: event.target.value
+      });
+
   }
 
   render() {
     return (
+      <div>
       <form name='shipping'>
-        <input id='addresslineone' placeholder='address' type='text' defaultValue=''/>
-        <input id='addresslinetwo' placeholder='apt number' type='text' defaultValue=''/>
-        <input id='phonenumber' placeholder='phone number' type='tel' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='address1' placeholder='address' type='text' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='address2' placeholder='apt number' type='text' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='phone' placeholder='phone number' type='text' defaultValue=''/>
       </form>
+      <button onClick={(event) => {
+        this.props.buttonHandler(event, this.state);
+      }}>Next</button>
+      </div>
     );
   }
 }
@@ -34,16 +72,30 @@ class Shipping extends React.Component {
 class CardInfo extends React.Component {
   constructor (props) {
     super(props);
+    this.state = {}
+  }
+
+  onChangeHandler (event) {
+
+    this.setState({
+      [event.target.name]: event.target.value
+      });
+
   }
 
   render() {
     return (
+      <div>
       <form name='CardInfo'>
-        <input id='creditcardnumber' placeholder='credit card #' type='text' defaultValue=''/>
-        <input id='expiration date' placeholder='MM/YY' type='text' defaultValue=''/>
-        <input id='cvv' placeholder='CVV' type='number' defaultValue=''/>
-        <input id='billingzip' placeholder='zipcode' type='number' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='cardnumber' placeholder='credit card #' type='text' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='expiration' placeholder='MM/YY' type='text' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='cvv' placeholder='CVV' type='number' defaultValue=''/>
+        <input onChange={this.onChangeHandler.bind(this)} name='zipcode' placeholder='zipcode' type='text' defaultValue=''/>
       </form>
+      <button onClick={(event) => {
+        this.props.buttonHandler(event, this.state);
+      }}>Next</button>
+      </div>
     );
   }
 }
@@ -54,30 +106,44 @@ class Forms extends React.Component {
   }
 
   render() {
-    if (this.props.page === 0) {
+
+    if (this.props.page === -1) {
+
       return (
         <div>
-          <SignUp/>
+          <p>check out now</p>
+          <button onClick={this.props.buttonHandler}>Checkout</button>
+        </div>
+      );
+    } else if (this.props.page === 0) {
+      return (
+        <div>
+          <SignUp buttonHandler={this.props.buttonHandler}/>
         </div>
       );
     } else if (this.props.page === 1) {
       return (
         <div>
-          <Shipping/>
+          <Shipping buttonHandler={this.props.buttonHandler}/>
         </div>
       );
 
     } else if (this.props.page === 2) {
       return (
         <div>
-          <CardInfo/>
+          <CardInfo buttonHandler={this.props.buttonHandler}/>
         </div>
       );
-    } else {
+    } else if (this.props.page === 3) {
       return (
         <div>
         <p>Verify Your Purchase Info Below</p>
-        {/* <button>Complete</button> */}
+        <ol>
+          {this.props.purchase.map((pair) => {
+            <li> {`${pair[0]}: ${pair[1]}`} </li>
+          })}
+        </ol>
+        <button onClick={this.props.buttonHandler}>Purchase</button>
         </div>
       );
     }
@@ -89,26 +155,86 @@ class App extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      page: 0
+      page: -1,
+      currentCustomer: []
     }
   }
 
-  nextPage (event) {
-    if (this.state.page === 2) {
-      event.target.innerHTML = 'Complete'
+  nextPage (event, data) {
+
+    if (this.state.page === -1) {
+      // create new database entry,
+      var myHeaders = new Headers();
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        redirect: 'follow'
+      };
+
+      fetch("http://localhost:3000/customer", requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          this.setState({
+            customerId: result,
+            page: 0
+          })
+        })
+        .catch(error => console.log('error', error));
+
+    } else if (this.state.page <= 2) {
+
+      if (this.state.page === 2) {
+        event.target.innerHTML = 'Complete'
+      }
+
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      data.id = this.state.customerId;
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify(data),
+        redirect: 'follow'
+      };
+
+      fetch("http://localhost:3000/customer/info", requestOptions)
+        .then(response => response.text())
+        .then(response => {
+          var result = [];
+          response = JSON.parse(response)[0];
+          console.log(response);
+          for (var key of Object.keys(response)) {
+            result.push([key, response[key]]);
+          }
+          this.setState({
+            purchase: result
+          })
+        })
+        .catch(error => console.log('error', error));
+
+
+      var page = this.state.page + 1;
+      this.setState({
+        page: page,
+        currentCustomer: this.state.currentCustomer.concat(data)
+      });
+
+    } else if (this.state.page === 3) {
+
+      // show data off
+
+
+    } else {
+      // do nothing
     }
-    var page = this.state.page + 1;
-    this.setState({
-      page: page
-    });
+
   }
 
   render() {
     return (
       <div className="App">
         <h1>App</h1>
-        <Forms page={this.state.page}/>
-        <button onClick={this.nextPage.bind(this)} name='next'>Next</button>
+        <Forms buttonHandler={this.nextPage.bind(this)} page={this.state.page} purchase={this.state.purchase}/>
       </div>
     );
   }
